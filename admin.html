@@ -543,7 +543,7 @@
     </ul>
 
     <div class="sidebar-footer">
-      <a href="index.html" class="logout-btn">
+      <a href="index.html" class="logout-btn" onclick="sessionStorage.removeItem('hf_admin_logged_in')">
         <i data-lucide="log-out"></i> Logout
       </a>
     </div>
@@ -838,6 +838,11 @@
   <!-- Lucide Icons Script -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
+    // Enforce Login
+    if (sessionStorage.getItem('hf_admin_logged_in') !== 'true') {
+      window.location.href = 'login.html';
+    }
+
     // Initialize icons
     lucide.createIcons();
 
