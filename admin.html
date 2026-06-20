@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HanumanFitness | Admin Dashboard</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons script loaded at the bottom -->
+  
+  <style>
+    /* =========================================================
+       Variables & Reset
+       ========================================================= */
+    :root {
+      --bg: #0b0b0b;
+      --surface: #1a1a1a;
+      --surface-hover: #222222;
+      --yellow: #FFD700;
+      --text-main: #FFFFFF;
+      --text-muted: #888888;
+      --green: #22c55e;
+      --red: #ef4444;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(255, 215, 0, 0.2);
+      --font-body: 'Inter', sans-serif;
+      --font-heading: 'Oswald', sans-serif;
+      --font-logo: 'Bebas Neue', sans-serif;
+      --sidebar-width: 260px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    /* =========================================================
+       Sidebar Navigation
+       ========================================================= */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .brand {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-logo {
+      font-family: var(--font-logo);
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo b { color: var(--yellow); font-weight: normal; }
+    .brand-logo i { color: var(--yellow); }
+
+    .nav-menu {
+      padding: 24px 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .nav-link:hover, .nav-link.active {
+      background-color: rgba(255, 215, 0, 0.05);
+      color: var(--yellow);
+    }
+    .nav-link i { width: 20px; height: 20px; }
+
+    .sidebar-footer {
+      padding: 24px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      color: var(--red);
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+    }
+    .logout-btn:hover {
+      background-color: rgba(239, 68, 68, 0.1);
+    }
+
+    /* =========================================================
+       Main Content Area
+       ========================================================= */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .page-title {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+    }
+    .admin-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    .admin-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--yellow);
+      color: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* =========================================================
+       Quick Stats
+       ========================================================= */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-accent);
+    }
+    .stat-icon {
+      width: 56px; height: 56px;
+      border-radius: 12px;
+      background-color: rgba(255, 215, 0, 0.1);
+      color: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stat-icon i { width: 28px; height: 28px; }
+    .stat-details h3 {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stat-details p {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: var(--font-heading);
+    }
+
+    /* =========================================================
+       Member Directory Table
+       ========================================================= */
+    .table-container {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .table-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .table-title {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      letter-spacing: 0.5px;
+    }
+    .search-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 300px;
+    }
+    .search-box i { color: var(--text-muted); width: 18px; height: 18px; }
+    .search-box input {
+      background: none;
+      border: none;
+      color: var(--text-main);
+      outline: none;
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th {
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      vertical-align: middle;
+      font-size: 0.95rem;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
+
+    .member-name { font-weight: 600; }
+    .member-phone { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .badge.active { background-color: rgba(34, 197, 94, 0.1); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.2); }
+    .badge.expired { background-color: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge.expiring { background-color: rgba(255, 215, 0, 0.1); color: var(--yellow); border: 1px solid rgba(255, 215, 0, 0.2); }
+
+    /* Actions */
+    .actions { display: flex; align-items: center; gap: 12px; }
+    .btn-renew {
+      background: transparent;
+      border: 1px solid var(--yellow);
+      color: var(--yellow);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    .btn-renew:hover {
+      background: var(--yellow);
+      color: var(--bg);
+    }
+    .btn-icon {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      width: 36px; height: 36px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    /* =========================================================
+       Renew Modal (Glassmorphism)
+       ========================================================= */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--border-accent);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      padding: 32px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .modal-header h2 {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      letter-spacing: 0.5px;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--red); }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--yellow);
+    }
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--yellow);
+      color: var(--bg);
+      border: none;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--font-heading);
+      letter-spacing: 1px;
+      margin-top: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 215, 0, 0.2);
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       SIDEBAR
+       ========================================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <i data-lucide="dumbbell"></i> Hanuman<b>Fitness</b>
+      </div>
+    </div>
+    
+    <ul class="nav-menu">
+      <li>
+        <a href="#" class="nav-link active" data-target="dashboard-view">
+          <i data-lucide="layout-dashboard"></i> Dashboard
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-target="directory-view">
+          <i data-lucide="users"></i> Member Directory
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-target="revenue-view">
+          <i data-lucide="indian-rupee"></i> Revenue
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-target="settings-view">
+          <i data-lucide="settings"></i> Settings
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <a href="index.html" class="logout-btn">
+        <i data-lucide="log-out"></i> Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- ==========================================
+       MAIN CONTENT
+       ========================================== -->
+  <main class="main-content">
+    
+    <header class="page-header">
+      <h1 class="page-title">Admin Dashboard</h1>
+      <div class="admin-profile">
+        <span>Admin User</span>
+        <div class="admin-avatar">A</div>
+      </div>
+    </header>
+
+    <!-- Dashboard View -->
+    <div id="dashboard-view" class="view-section">
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i data-lucide="user-check"></i></div>
+        <div class="stat-details">
+          <h3>Total Active Members</h3>
+          <p id="metric-active-members">0</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i data-lucide="trending-up"></i></div>
+        <div class="stat-details">
+          <h3>Revenue This Month</h3>
+          <p id="metric-dashboard-rev">₹0</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i data-lucide="clock"></i></div>
+        <div class="stat-details">
+          <h3>Expiring This Week</h3>
+          <p>0</p>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+    <!-- Directory View -->
+    <div id="directory-view" class="view-section" style="display: none;">
+    <!-- Directory Table -->
+    <div class="table-container">
+      <div class="table-header">
+        <h2 class="table-title">Recent Memberships</h2>
+        <div style="display: flex; gap: 16px;">
+          <div class="search-box">
+            <i data-lucide="search"></i>
+            <input type="text" id="member-search" placeholder="Search by Name or Phone...">
+          </div>
+          <button class="btn-submit" onclick="openAddModal()" style="width: auto; margin: 0; padding: 10px 20px; font-size: 0.9rem;">+ Add New Member</button>
+        </div>
+      </div>
+      
+      <div style="max-height: 60vh; overflow-y: auto; border-radius: 8px;">
+        <table>
+          <thead style="position: sticky; top: 0; z-index: 10; background: #1a1a1a;">
+            <tr>
+              <th>Member Details</th>
+              <th>Plan</th>
+              <th>Expiry Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="directory-table-body">
+            <tr id="empty-state">
+              <td colspan="5" style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+                <div style="margin-bottom: 15px;"><i data-lucide="users" style="width: 48px; height: 48px; opacity: 0.3;"></i></div>
+                <h3 style="font-family: var(--font-heading); color: #fff; font-size: 1.5rem; margin-bottom: 5px;">No members found.</h3>
+                <p>Click "Add New Member" to start.</p>
+              </td>
+            </tr>
+          </tbody>
+      </table>
+      </div>
+    </div>
+    </div>
+
+    <!-- Revenue View -->
+    <div id="revenue-view" class="view-section" style="display: none;">
+      <!-- Revenue Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="color: var(--green); background-color: rgba(34, 197, 94, 0.1);"><i data-lucide="wallet"></i></div>
+          <div class="stat-details">
+            <h3>Total Revenue (All Time)</h3>
+            <p id="metric-total-rev">₹0</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i data-lucide="calendar"></i></div>
+          <div class="stat-details">
+            <h3>Revenue (This Month)</h3>
+            <p id="metric-month-rev">₹0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions Table -->
+      <div class="table-container">
+        <div class="table-header">
+          <h2 class="table-title">Recent Transactions</h2>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Member Name</th>
+              <th>Package Bought</th>
+              <th>Amount Paid</th>
+            </tr>
+          </thead>
+          <tbody id="revenue-table-body">
+            <!-- Transactions will be injected here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Settings View -->
+    <div id="settings-view" class="view-section" style="display: none;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        
+        <!-- Gym Details Card -->
+        <div class="table-container" style="padding: 30px;">
+          <h2 style="font-family: var(--font-heading); color: var(--yellow); margin-bottom: 20px;">Gym Details</h2>
+          <div class="form-group">
+            <label>Gym Name</label>
+            <input type="text" value="HanumanFitness">
+          </div>
+          <div class="form-group">
+            <label>Admin Phone Number</label>
+            <input type="text" value="+91 98765 43210">
+          </div>
+          <div class="form-group">
+            <label>Address</label>
+            <textarea rows="3" style="width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 8px; font-family: inherit; resize: none;">123 Iron Street, Muscle City, 400001</textarea>
+          </div>
+        </div>
+
+        <!-- Pricing Configuration Card -->
+        <div class="table-container" style="padding: 30px;">
+          <h2 style="font-family: var(--font-heading); color: var(--yellow); margin-bottom: 20px;">Pricing Configuration</h2>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+              <h4 style="color: #aaa; margin-bottom: 10px;">Strength Training</h4>
+              <div class="form-group"><label>1 Month</label><input type="number" value="1000"></div>
+              <div class="form-group"><label>3 Months</label><input type="number" value="2500"></div>
+              <div class="form-group"><label>6 Months</label><input type="number" value="4000"></div>
+              <div class="form-group"><label>12 Months</label><input type="number" value="7000"></div>
+            </div>
+            <div>
+              <h4 style="color: #aaa; margin-bottom: 10px;">Cardio + Strength</h4>
+              <div class="form-group"><label>1 Month</label><input type="number" value="1500"></div>
+              <div class="form-group"><label>3 Months</label><input type="number" value="4000"></div>
+              <div class="form-group"><label>6 Months</label><input type="number" value="7000"></div>
+              <div class="form-group"><label>12 Months</label><input type="number" value="10000"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div style="text-align: right; margin-top: 30px;">
+        <button id="btn-save-settings" class="btn-submit" style="width: auto; padding: 16px 40px;">Save Changes</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================
+       ADD MEMBER MODAL
+       ========================================== -->
+  <div class="modal-overlay" id="addMemberModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Add New Member</h2>
+        <button class="modal-close" onclick="closeAddModal()" aria-label="Close modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <form onsubmit="confirmAddMember(event)">
+        <div class="form-group">
+          <label>Member Name</label>
+          <input type="text" id="addMemberName" placeholder="Enter full name" required>
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="text" id="addMemberPhone" placeholder="+91 XXXXX XXXXX" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Workout Type</label>
+          <select id="addWorkoutType" required>
+            <option value="strength">Strength Training</option>
+            <option value="cardio_strength">Cardio + Strength</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Duration</label>
+          <select id="addRenewalPlan" required>
+            <option value="1">Monthly (1 Month)</option>
+            <option value="3">Quarterly (3 Months)</option>
+            <option value="6">Half Yearly (6 Months)</option>
+            <option value="12">Yearly (12 Months)</option>
+          </select>
+        </div>
+        
+        <div class="form-group" style="text-align: center;">
+          <h3 id="add-calculated-cost" style="color: var(--yellow); font-family: var(--font-heading); font-size: 2rem; margin-top: 10px; margin-bottom: 5px;">Total Cost: ₹1000</h3>
+        </div>
+        
+        <div class="form-group">
+          <label>Payment Method</label>
+          <select required>
+            <option value="upi">UPI / Online</option>
+            <option value="cash">Cash</option>
+            <option value="card">Credit/Debit Card</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="btn-submit">Confirm & Add</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       RENEWAL MODAL
+       ========================================== -->
+  <div class="modal-overlay" id="renewModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Renew Membership</h2>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <form onsubmit="confirmRenewal(event)">
+        <div class="form-group">
+          <label>Member Name</label>
+          <input type="text" id="modalMemberName" readonly style="color: var(--text-muted); pointer-events: none;">
+        </div>
+        
+        <div class="form-group">
+          <label>Select Renewal Plan</label>
+          <select id="modalRenewalPlan" required>
+            <option value="1">Monthly (1 Month)</option>
+            <option value="3">Quarterly (3 Months)</option>
+            <option value="6">Half Yearly (6 Months)</option>
+            <option value="12">Yearly (12 Months)</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Workout Type</label>
+          <select id="modalWorkoutType" required>
+            <option value="strength">Strength Training</option>
+            <option value="cardio_strength">Cardio + Strength</option>
+          </select>
+        </div>
+        
+        <div class="form-group" style="text-align: center;">
+          <h3 id="calculated-cost" style="color: var(--yellow); font-family: var(--font-heading); font-size: 2rem; margin-top: 10px; margin-bottom: 5px;">Total Cost: ₹0</h3>
+        </div>
+        
+        <div class="form-group">
+          <label>Payment Method</label>
+          <select required>
+            <option value="upi">UPI / Online</option>
+            <option value="cash">Cash</option>
+            <option value="card">Credit/Debit Card</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="btn-submit">Confirm Renewal</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lucide Icons Script -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // SPA Navigation Logic
+    const navLinks = document.querySelectorAll('.nav-menu .nav-link');
+    const viewSections = document.querySelectorAll('.view-section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Remove active class from all
+        navLinks.forEach(l => l.classList.remove('active'));
+        // Add active to clicked
+        this.classList.add('active');
+        
+        // Switch sections
+        const targetId = this.getAttribute('data-target');
+        viewSections.forEach(sec => {
+          sec.style.display = (sec.id === targetId) ? 'block' : 'none';
+        });
+      });
+    });
+
+    // Modal Logic & Tracking
+    const modal = document.getElementById('renewModal');
+    const memberNameInput = document.getElementById('modalMemberName');
+    const workoutTypeSelect = document.getElementById('modalWorkoutType');
+    const renewalPlanSelect = document.getElementById('modalRenewalPlan');
+    const calculatedCostEl = document.getElementById('calculated-cost');
+    let currentRow = null;
+
+    const addModal = document.getElementById('addMemberModal');
+    const addWorkoutTypeSelect = document.getElementById('addWorkoutType');
+    const addRenewalPlanSelect = document.getElementById('addRenewalPlan');
+    const addCalculatedCostEl = document.getElementById('add-calculated-cost');
+
+    let totalRevenue = 0;
+    let monthRevenue = 0;
+    const metricTotalRev = document.getElementById('metric-total-rev');
+    const metricMonthRev = document.getElementById('metric-month-rev');
+    const revenueTableBody = document.getElementById('revenue-table-body');
+
+    // Shared Pricing Logic
+    function calculatePrice(workout, duration) {
+      let price = 0;
+      if (workout === 'strength') {
+        if (duration === '1') price = 1000;
+        else if (duration === '3') price = 2500;
+        else if (duration === '6') price = 4000;
+        else if (duration === '12') price = 7000;
+      } else if (workout === 'cardio_strength') {
+        if (duration === '1') price = 1500;
+        else if (duration === '3') price = 4000;
+        else if (duration === '6') price = 7000;
+        else if (duration === '12') price = 10000;
+      }
+      return price;
+    }
+
+    function updateRenewPricing() {
+      if (!workoutTypeSelect || !renewalPlanSelect || !calculatedCostEl) return;
+      const price = calculatePrice(workoutTypeSelect.value, renewalPlanSelect.value);
+      calculatedCostEl.innerText = `Total Cost: ₹${price}`;
+      // Store current price on element for easy retrieval
+      calculatedCostEl.dataset.price = price;
+    }
+
+    function updateAddPricing() {
+      if (!addWorkoutTypeSelect || !addRenewalPlanSelect || !addCalculatedCostEl) return;
+      const price = calculatePrice(addWorkoutTypeSelect.value, addRenewalPlanSelect.value);
+      addCalculatedCostEl.innerText = `Total Cost: ₹${price}`;
+      addCalculatedCostEl.dataset.price = price;
+    }
+
+    if (workoutTypeSelect) workoutTypeSelect.addEventListener('change', updateRenewPricing);
+    if (renewalPlanSelect) renewalPlanSelect.addEventListener('change', updateRenewPricing);
+    if (addWorkoutTypeSelect) addWorkoutTypeSelect.addEventListener('change', updateAddPricing);
+    if (addRenewalPlanSelect) addRenewalPlanSelect.addEventListener('change', updateAddPricing);
+
+    // Renew Modal Handlers
+    function openModal(btn) {
+      currentRow = btn.closest('tr');
+      const memberName = currentRow.querySelector('.member-name').innerText;
+      memberNameInput.value = memberName;
+      updateRenewPricing();
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      currentRow = null;
+    }
+
+    modal.addEventListener('click', function(e) {
+      if(e.target === modal) closeModal();
+    });
+
+    // Add Member Modal Handlers
+    function openAddModal() {
+      updateAddPricing();
+      addModal.classList.add('active');
+    }
+
+    function closeAddModal() {
+      addModal.classList.remove('active');
+    }
+
+    addModal.addEventListener('click', function(e) {
+      if(e.target === addModal) closeAddModal();
+    });
+
+    // Update Dashboard Metrics
+    function updateDashboardStats() {
+      const tbody = document.getElementById('directory-table-body');
+      const activeMembersMetric = document.getElementById('metric-active-members');
+      if (!tbody || !activeMembersMetric) return;
+      
+      let count = 0;
+      const rows = tbody.querySelectorAll('tr');
+      rows.forEach(row => {
+        if (row.id !== 'empty-state') count++;
+      });
+      activeMembersMetric.innerText = count;
+    }
+
+    // Delete Member
+    function deleteMember(btn) {
+      if(confirm('Are you sure you want to delete this member?')) {
+        btn.closest('tr').remove();
+        updateDashboardStats();
+      }
+    }
+
+    // Revenue Tracker
+    function logTransaction(name, planText, amount) {
+      // Update metrics
+      totalRevenue += amount;
+      monthRevenue += amount;
+      metricTotalRev.innerText = `₹${totalRevenue.toLocaleString('en-IN')}`;
+      metricMonthRev.innerText = `₹${monthRevenue.toLocaleString('en-IN')}`;
+      
+      const dashboardRev = document.getElementById('metric-dashboard-rev');
+      if (dashboardRev) dashboardRev.innerText = `₹${monthRevenue.toLocaleString('en-IN')}`;
+
+      // Prepend to revenue table
+      const date = new Date();
+      const options = { month: 'short', day: '2-digit', year: 'numeric' };
+      const dateStr = date.toLocaleDateString('en-US', options);
+
+      const rowHtml = `
+        <tr>
+          <td>${dateStr}</td>
+          <td><div class="member-name">${name}</div></td>
+          <td>${planText}</td>
+          <td style="color: var(--green); font-weight: bold;">₹${amount.toLocaleString('en-IN')}</td>
+        </tr>
+      `;
+      revenueTableBody.insertAdjacentHTML('afterbegin', rowHtml);
+    }
+
+    // Submissions
+    function confirmRenewal(e) {
+      e.preventDefault();
+      
+      if(currentRow) {
+        const cells = currentRow.querySelectorAll('td');
+        const monthsToAdd = parseInt(renewalPlanSelect.value, 10);
+        
+        const durationMatch = renewalPlanSelect.options[renewalPlanSelect.selectedIndex].text.match(/\((.*?)\)/);
+        const durationText = durationMatch ? durationMatch[1] : renewalPlanSelect.options[renewalPlanSelect.selectedIndex].text;
+        const workoutText = workoutTypeSelect.options[workoutTypeSelect.selectedIndex].text;
+        
+        const combinedPlanText = `${workoutText} - ${durationText}`;
+        cells[1].innerText = combinedPlanText;
+
+        const date = new Date();
+        date.setMonth(date.getMonth() + monthsToAdd);
+        const options = { month: 'short', day: '2-digit', year: 'numeric' };
+        const newExpiryDate = date.toLocaleDateString('en-US', options);
+
+        cells[2].innerText = newExpiryDate;
+
+        const badge = cells[3].querySelector('.badge');
+        badge.className = 'badge active';
+        badge.innerText = 'Active';
+
+        const price = parseInt(calculatedCostEl.dataset.price || 0, 10);
+        logTransaction(memberNameInput.value, combinedPlanText, price);
+      }
+
+      closeModal();
+      e.target.reset();
+      updateDashboardStats();
+    }
+
+    function confirmAddMember(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('addMemberName').value;
+      const phone = document.getElementById('addMemberPhone').value;
+      const monthsToAdd = parseInt(addRenewalPlanSelect.value, 10);
+
+      const durationMatch = addRenewalPlanSelect.options[addRenewalPlanSelect.selectedIndex].text.match(/\((.*?)\)/);
+      const durationText = durationMatch ? durationMatch[1] : addRenewalPlanSelect.options[addRenewalPlanSelect.selectedIndex].text;
+      const workoutText = addWorkoutTypeSelect.options[addWorkoutTypeSelect.selectedIndex].text;
+      
+      const combinedPlanText = `${workoutText} - ${durationText}`;
+
+      const date = new Date();
+      date.setMonth(date.getMonth() + monthsToAdd);
+      const options = { month: 'short', day: '2-digit', year: 'numeric' };
+      const newExpiryDate = date.toLocaleDateString('en-US', options);
+
+      const price = parseInt(addCalculatedCostEl.dataset.price || 0, 10);
+
+      // Inject into Directory Table
+      const directoryTableBody = document.getElementById('directory-table-body');
+      
+      const emptyState = document.getElementById('empty-state');
+      if (emptyState) emptyState.remove();
+
+      const newRowHtml = `
+        <tr>
+          <td>
+            <div class="member-name">${name}</div>
+            <div class="member-phone">${phone}</div>
+          </td>
+          <td>${combinedPlanText}</td>
+          <td>${newExpiryDate}</td>
+          <td><span class="badge active">Active</span></td>
+          <td>
+            <div class="actions">
+              <button class="btn-renew" onclick="openModal(this)">Renew</button>
+              <button class="btn-icon" aria-label="Edit Member"><i data-lucide="edit-3"></i></button>
+              <button class="btn-icon" aria-label="Delete Member" style="color: var(--red);" onclick="deleteMember(this)"><i data-lucide="trash-2"></i></button>
+            </div>
+          </td>
+        </tr>
+      `;
+      directoryTableBody.insertAdjacentHTML('afterbegin', newRowHtml);
+      
+      // Log transaction
+      logTransaction(name, combinedPlanText, price);
+
+      // Refresh icons
+      lucide.createIcons();
+
+      closeAddModal();
+      e.target.reset();
+      updateDashboardStats();
+    }
+
+    // Real-Time Search Filtering
+    const searchInput = document.getElementById('member-search');
+    if (searchInput) {
+      searchInput.addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const tbody = document.getElementById('directory-table-body');
+        if (!tbody) return;
+        const rows = tbody.getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+          const textContent = rows[i].textContent || rows[i].innerText;
+          if (textContent.toLowerCase().indexOf(filter) > -1) {
+            rows[i].style.display = "";
+          } else {
+            rows[i].style.display = "none";
+          }
+        }
+      });
+    }
+    
+    // Settings View Button Animation
+    const btnSaveSettings = document.getElementById('btn-save-settings');
+    if (btnSaveSettings) {
+      btnSaveSettings.addEventListener('click', function() {
+        const originalText = this.innerText;
+        this.innerText = 'Saving...';
+        setTimeout(() => {
+          this.innerText = 'Saved!';
+          this.style.background = 'var(--green)';
+          setTimeout(() => {
+            this.innerText = originalText;
+            this.style.background = 'var(--yellow)';
+          }, 1500);
+        }, 1000);
+      });
+    }
+  </script>
+</body>
+</html>

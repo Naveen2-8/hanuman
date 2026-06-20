@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HanumanFitness – Premier gym in Shoolagiri. Strength training, cardio, affordable plans. HMS Building, Near Bus Stand." />
+  <meta name="keywords" content="HanumanFitness, gym Shoolagiri, fitness center, strength training, cardio" />
+  <title>HanumanFitness | Shoolagiri's Premier Gym</title>
+
+  <!-- Preconnect: load external resources faster -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="preconnect" href="https://maps.google.com" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFD600' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6.5 6.5 11 11'/><path d='m21 21-1-1'/><path d='m3 3 1 1'/><path d='m18 22 4-4'/><path d='m2 6 4-4'/><path d='m3 10 7-7'/><path d='m14 21 7-7'/></svg>" />
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-outline" id="cursorOutline"></div>
+
+<!-- ══════════════════════════════════════
+     PRELOADER
+══════════════════════════════════════ -->
+<div id="preloader">
+  <div class="pl-counter" id="plCounter">0%</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     STICKY HEADER
+══════════════════════════════════════ -->
+<header id="hdr">
+  <div class="nav-inner">
+
+    <div class="logo">
+      <em><i data-lucide="dumbbell"></i></em>
+      Hanuman<b>Fitness</b>
+    </div>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home"        class="on">Home</a></li>
+      <li><a href="#facility"       >Facility</a></li>
+      <li><a href="#memberships"    >Memberships</a></li>
+      <li><a href="#about"          >About Us</a></li>
+      <li><a href="#location"       >Location</a></li>
+      <li><a href="#contact"        >Contact</a></li>
+    </ul>
+
+    <button class="ham" id="hamBtn" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile nav overlay -->
+<nav class="mob-nav" id="mobNav">
+  <button class="mob-close" id="mobClose" aria-label="Close menu"><i data-lucide="x"></i></button>
+  <a href="#home"        >Home</a>
+  <a href="#facility"   >Facility</a>
+  <a href="#memberships">Memberships</a>
+  <a href="#about"      >About Us</a>
+  <a href="#location"   >Location</a>
+  <a href="#contact"    >Contact</a>
+</nav>
+
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section id="home">
+
+  <div class="hero-img"></div>
+  <div class="hero-dim"></div>
+
+  <div class="hero-box">
+
+    <span class="hero-pill"><i data-lucide="flame"></i> Shoolagiri's #1 Gym</span>
+
+    <h1 class="hero-h1">
+      Forge Your
+      <span class="yl">Strength.</span>
+    </h1>
+
+    <p class="hero-p">
+      Elite training. Real results. No excuses. — At HanumanFitness we don't just build bodies, we build warriors.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#contact" class="btn-y"><i data-lucide="zap"></i> Join Now</a>
+      <a href="#memberships" class="btn-ghost">View Plans →</a>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════
+     MARQUEE
+══════════════════════════════════════ -->
+<section class="marquee-sec">
+  <div class="marquee-track">
+    <div class="marquee-content">EMBRACE THE UNKNOWN &bull; FORGED IN FOCUS &bull; EMBRACE THE UNKNOWN &bull; FORGED IN FOCUS &bull; EMBRACE THE UNKNOWN &bull; FORGED IN FOCUS &bull;&nbsp;</div>
+    <div class="marquee-content">EMBRACE THE UNKNOWN &bull; FORGED IN FOCUS &bull; EMBRACE THE UNKNOWN &bull; FORGED IN FOCUS &bull; EMBRACE THE UNKNOWN &bull; FORGED IN FOCUS &bull;&nbsp;</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FACILITY / GALLERY
+══════════════════════════════════════ -->
+<section id="facility">
+  <div class="wrap">
+
+    <div class="sec-head reveal-up">
+      <span class="sec-tag">Our Space</span>
+      <h2 class="sec-title">A Halcyon Haven<br/><span>Forged in Focus.</span></h2>
+      <p>Step into the unknown. This is where you belong. State-of-the-art equipment in a purely motivating atmosphere.</p>
+    </div>
+
+    <div class="gallery">
+
+      <!-- Slot 1: featured local image -->
+      <div class="g-item big reveal-stagger" data-label="Our Gym" style="--st:1;">
+        <img src="gym.jpg.jpeg" alt="HanumanFitness main gym floor" loading="eager" />
+      </div>
+
+      <!-- Slots 2-8: external fitness images -->
+      <div class="g-item reveal-stagger" data-label="Training Zone" style="--st:2;">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80&auto=format&fit=crop" alt="Gym training" loading="lazy" />
+      </div>
+
+      <div class="g-item reveal-stagger" data-label="Power Lifting" style="--st:3;">
+        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80&auto=format&fit=crop" alt="Power lifting" loading="lazy" />
+      </div>
+
+      <div class="g-item reveal-stagger" data-label="Elite Physique" style="--st:4;">
+        <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80&auto=format&fit=crop" alt="Elite physique training" loading="lazy" />
+      </div>
+
+      <div class="g-item reveal-stagger" data-label="Strength" style="--st:5;">
+        <img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=600&q=80&auto=format&fit=crop" alt="Strength training" loading="lazy" />
+      </div>
+
+      <div class="g-item reveal-stagger" data-label="Cardio" style="--st:6;">
+        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=600&q=80&auto=format&fit=crop" alt="Cardio training" loading="lazy" />
+      </div>
+
+      <div class="g-item reveal-stagger" data-label="Aesthetics" style="--st:7;">
+        <img src="https://images.unsplash.com/photo-1549476464-37392f717541?w=600&q=80&auto=format&fit=crop" alt="Bodybuilder aesthetics" loading="lazy" />
+      </div>
+
+      <div class="g-item reveal-stagger" data-label="Motivation" style="--st:8;">
+        <img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?w=600&q=80&auto=format&fit=crop" alt="Fitness motivation" loading="lazy" />
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     MEMBERSHIPS & TIMINGS
+══════════════════════════════════════ -->
+<section id="memberships">
+  <div class="wrap">
+
+    <div class="mb-head reveal-up">
+      <span class="sec-tag">Plans &amp; Pricing</span>
+      <h2 class="sec-title">Memberships &amp; <span>Timings</span></h2>
+    </div>
+
+    <!-- Admission fee -->
+    <div class="admission reveal-up">
+      <span class="ad-label"><i data-lucide="ticket"></i> One-Time Admission Fee</span>
+      <span class="ad-price">₹500/–</span>
+      <span class="ad-note">Paid once at enrollment</span>
+    </div>
+
+    <!-- Plan cards -->
+    <div class="plans">
+
+      <!-- Strength Training -->
+      <div class="plan-card reveal-stagger" style="--st:1;">
+        <div class="plan-head">
+          <span class="plan-icon"><i data-lucide="dumbbell"></i></span>
+          <span class="plan-name">Strength Training</span>
+          <span class="plan-sub">Weights · Machines · Free Weights</span>
+        </div>
+        <table class="plan-rows">
+          <tbody>
+            <tr><td>Monthly</td><td>₹1,000/–</td></tr>
+            <tr><td>Quarterly <small style="opacity:.55">(3 Months)</small></td><td>₹2,500/–</td></tr>
+            <tr><td>Half Yearly <small style="opacity:.55">(6 Months)</small></td><td>₹4,000/–</td></tr>
+            <tr><td>Yearly <small style="opacity:.55">(12 Months)</small></td><td>₹7,000/–</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Cardio + Strength (featured) -->
+      <div class="plan-card star reveal-stagger" style="--st:2;">
+        <div class="plan-head">
+          <span class="plan-icon"><i data-lucide="flame"></i></span>
+          <span class="plan-name">Cardio + Strength</span>
+          <span class="plan-sub">Full Access · Cardio + Weights</span>
+          <span class="pop-tag"><i data-lucide="star" style="width: 12px; height: 12px; fill: var(--black)"></i> Popular</span>
+        </div>
+        <table class="plan-rows">
+          <tbody>
+            <tr><td>Monthly</td><td>₹1,500/–</td></tr>
+            <tr><td>Quarterly <small style="opacity:.55">(3 Months)</small></td><td>₹4,000/–</td></tr>
+            <tr><td>Half Yearly <small style="opacity:.55">(6 Months)</small></td><td>₹7,000/–</td></tr>
+            <tr><td>Yearly <small style="opacity:.55">(12 Months)</small></td><td>₹10,000/–</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /plans -->
+
+    <!-- Timings -->
+    <div class="timings reveal-up">
+      <div class="timings-left">
+        <h3>🕒 Gym Timings</h3>
+        <p>Open 7 Days a Week</p>
+      </div>
+      <div class="slots">
+        <div class="slot">
+          <div class="si"><i data-lucide="sunrise"></i></div>
+          <div class="sl">Morning Session</div>
+          <div class="st">5:00 AM – 10:00 AM</div>
+        </div>
+        <div class="slot">
+          <div class="si"><i data-lucide="sunset"></i></div>
+          <div class="sl">Evening Session</div>
+          <div class="st">4:00 PM – 10:00 PM</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     ABOUT US
+══════════════════════════════════════ -->
+<section id="about">
+
+  <div class="about-bg"></div>
+  <div class="about-dim"></div>
+
+  <div class="wrap reveal-up">
+    <div class="about-content">
+
+      <span class="about-tag">The Sanctum</span>
+
+      <h2 class="sec-title">
+        More Than A Gym.<br/>
+        <span>A Brotherhood.</span>
+      </h2>
+
+      <p>
+        HanumanFitness was founded with one mission — to bring world-class fitness to Shoolagiri. Named after the symbol of strength, devotion, and discipline, we believe every person carries the power of Hanuman within them.
+      </p>
+      <p>
+        Our certified trainers push you beyond limits in a space built to inspire. Whether you're lifting your first dumbbell or chasing a competition stage, this is your arena.
+      </p>
+
+      <div class="about-feats">
+        <div class="feat"><span class="ck"><i data-lucide="check"></i></span> Expert Certified Trainers</div>
+        <div class="feat"><span class="ck"><i data-lucide="check"></i></span> Premium Equipment</div>
+        <div class="feat"><span class="ck"><i data-lucide="check"></i></span> Clean, Hygienic Space</div>
+        <div class="feat"><span class="ck"><i data-lucide="check"></i></span> Diet &amp; Nutrition Guidance</div>
+        <div class="feat"><span class="ck"><i data-lucide="check"></i></span> Supportive Community</div>
+        <div class="feat"><span class="ck"><i data-lucide="check"></i></span> Flexible Timings</div>
+      </div>
+
+      <a href="#contact" class="btn-y" style="display:inline-flex;"><i data-lucide="zap"></i> Start Today</a>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     LOCATION
+══════════════════════════════════════ -->
+<section id="location">
+  <div class="wrap reveal-up">
+
+    <div>
+      <span class="sec-tag">Find Us</span>
+      <h2 class="sec-title">Our <span>Location</span></h2>
+    </div>
+
+    <div class="loc-grid">
+
+      <!-- Info cards -->
+      <div class="loc-cards">
+
+        <div class="loc-card">
+          <div class="ic"><i data-lucide="map-pin"></i></div>
+          <div>
+            <h4>Address</h4>
+            <p>HMS Building, 3rd Floor<br/>Near Bus Stand, Shoolagiri<br/>Tamil Nadu, India</p>
+          </div>
+        </div>
+
+        <div class="loc-card">
+          <div class="ic"><i data-lucide="phone"></i></div>
+          <div>
+            <h4>Phone</h4>
+            <a href="tel:7604865472">+91 76048 65472</a>
+          </div>
+        </div>
+
+        <div class="loc-card">
+          <div class="ic"><i data-lucide="mail"></i></div>
+          <div>
+            <h4>Email</h4>
+            <a href="mailto:nxv77@gmail.com">nxv77@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="loc-card">
+          <div class="ic"><i data-lucide="clock"></i></div>
+          <div>
+            <h4>Open Hours</h4>
+            <p>Morning: 5:00 AM – 10:00 AM<br/>Evening: 4:00 PM – 10:00 PM</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Map -->
+      <div class="map-wrap">
+        <div class="map-badge">
+          <div class="map-dot"></div>
+          <span>HanumanFitness</span>
+        </div>
+        <iframe
+          title="HanumanFitness – HMS Building, Near Bus Stand, Shoolagiri"
+          src="https://maps.google.com/maps?q=Shoolagiri+Bus+Stand+Shoolagiri+Tamil+Nadu+635117&output=embed&hl=en&z=19&t=m"
+          width="100%"
+          height="100%"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ══════════════════════════════════════
+     FAQ / INFORMATION
+══════════════════════════════════════ -->
+<section id="faq" style="background: var(--black-2); padding-top: 90px;">
+  <div class="wrap reveal-up">
+    <div class="sec-head">
+      <span class="sec-tag">Information</span>
+      <h2 class="sec-title">Frequently Asked <span>Questions</span></h2>
+    </div>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-btn">
+          <span>Do you offer personal training?</span>
+          <i data-lucide="plus" class="faq-icon"></i>
+        </button>
+        <div class="faq-content">
+          <p>Yes. Our elite certified trainers provide 1-on-1 coaching customized to your specific goals, from weight loss to competitive bodybuilding. Each session is tailored for maximum results.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn">
+          <span>Are there lockers available?</span>
+          <i data-lucide="plus" class="faq-icon"></i>
+        </button>
+        <div class="faq-content">
+          <p>Absolutely. We offer secure, daily-use lockers, along with premium shower and changing room facilities to ensure you can train and easily transition to the rest of your day.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn">
+          <span>What is the cancellation policy?</span>
+          <i data-lucide="plus" class="faq-icon"></i>
+        </button>
+        <div class="faq-content">
+          <p>We require a 30-day notice for the cancellation of any recurring monthly membership. Annual memberships are non-refundable but can be paused for medical emergencies.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER / CONTACT
+══════════════════════════════════════ -->
+<footer id="contact">
+
+  <div class="footer-top">
+    <div class="wrap reveal-up">
+      <div class="ft-grid">
+
+        <!-- Brand -->
+        <div class="ft-brand">
+          <div class="logo">
+            <em><i data-lucide="dumbbell"></i></em>
+            Hanuman<b>Fitness</b>
+          </div>
+          <p>Forging strength, building discipline, creating champions — one rep at a time. Join Shoolagiri's premier fitness community.</p>
+
+          <div class="ft-socials">
+
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/m.d.pzaahid" target="_blank" rel="noopener" class="soc" title="Instagram @m.d.pzaahid">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.012-3.584.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm3.98-10.834a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/>
+              </svg>
+            </a>
+
+            <!-- WhatsApp -->
+            <a href="https://wa.me/917604865472?text=Hi%20HanumanFitness!%20I%20would%20like%20to%20know%20more%20about%20the%20gym" target="_blank" rel="noopener" class="soc" title="Chat on WhatsApp">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+              </svg>
+            </a>
+
+            <!-- Phone -->
+            <a href="tel:7604865472" class="soc" title="Call Us">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+              </svg>
+            </a>
+
+            <!-- Email -->
+            <a href="mailto:nxv77@gmail.com" class="soc" title="Email Us">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="ft-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#facility">Facility</a></li>
+            <li><a href="#memberships">Memberships</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#location">Location</a></li>
+          </ul>
+        </div>
+
+        <!-- Plans -->
+        <div class="ft-col">
+          <h4>Our Plans</h4>
+          <ul>
+            <li><a href="#memberships">Strength Training</a></li>
+            <li><a href="#memberships">Cardio + Strength</a></li>
+            <li><a href="#memberships">Monthly Plans</a></li>
+            <li><a href="#memberships">Annual Plans</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact info -->
+        <div class="ft-col">
+          <h4>Contact Us</h4>
+          <div class="ct-item">
+            <span class="ico"><i data-lucide="map-pin"></i></span>
+            <span>HMS Building, 3rd Floor,<br/>Near Bus Stand, Shoolagiri</span>
+          </div>
+          <div class="ct-item">
+            <span class="ico"><i data-lucide="phone"></i></span>
+            <a href="tel:7604865472">+91 76048 65472</a>
+          </div>
+          <div class="ct-item">
+            <span class="ico"><i data-lucide="mail"></i></span>
+            <a href="mailto:nxv77@gmail.com">nxv77@gmail.com</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="wrap">
+    <div class="footer-bar">
+      <p>© 2025 <span>HanumanFitness</span>. All rights reserved. Shoolagiri, Tamil Nadu.</p>
+      <a href="admin.html" class="admin-link" title="Admin Login">
+        <i data-lucide="lock" style="width: 14px; height: 14px; margin-right: 4px;"></i>
+        Admin Login
+      </a>
+    </div>
+  </div>
+
+</footer>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/917604865472?text=Hi%20HanumanFitness!%20I%20would%20like%20to%20know%20more%20about%20the%20gym" target="_blank" rel="noopener" class="wa-float" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+  </svg>
+</a>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="js/main.js" defer></script>
+</body>
+</html>
