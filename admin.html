@@ -10,6 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
   
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <!-- Lucide Icons script loaded at the bottom -->
   
   <style>
@@ -505,9 +508,50 @@
         max-width: 92%;
       }
     }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-10px); }
+      80% { transform: translateX(10px); }
+    }
+    #pin-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #0b0b0b; z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.4s ease;
+    }
+    .pin-card {
+      background: rgba(26, 26, 26, 0.8); backdrop-filter: blur(10px);
+      border: 1px solid var(--border); padding: 40px; border-radius: 16px;
+      text-align: center; width: 100%; max-width: 350px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .pin-input {
+      background: var(--bg); border: 1px solid var(--border);
+      color: var(--text-main); font-size: 2rem; font-family: var(--font-heading);
+      text-align: center; width: 100%; padding: 15px; border-radius: 8px;
+      margin: 20px 0; outline: none; letter-spacing: 5px;
+      transition: border-color 0.2s;
+    }
+    .pin-input.error { border-color: var(--red); animation: shake 0.4s; }
   </style>
 </head>
 <body>
+
+  <!-- ==========================================
+       PIN SECURITY OVERLAY
+       ========================================== -->
+  <div id="pin-overlay">
+    <div class="pin-card">
+      <div class="brand-logo" style="justify-content: center; margin-bottom: 10px;">
+        <i data-lucide="dumbbell" style="color: var(--yellow);"></i> Hanuman<b style="color:var(--yellow); font-weight:normal;">Fitness</b>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Admin Dashboard Secure Access</p>
+      <input type="password" id="admin-pin" class="pin-input" placeholder="••••" maxlength="4">
+      <button class="btn-submit" onclick="unlockDashboard()">Unlock</button>
+    </div>
+  </div>
 
   <!-- ==========================================
        SIDEBAR
@@ -651,6 +695,12 @@
         </div>
       </div>
 
+      <!-- Interactive Revenue Chart -->
+      <div class="table-container" style="margin-bottom: 20px; padding: 20px;">
+        <h2 class="table-title">Revenue by Workout Type</h2>
+        <canvas id="revenueChart" style="max-height: 300px; width: 100%;"></canvas>
+      </div>
+
       <!-- Transactions Table -->
       <div class="table-container">
         <div class="table-header">
@@ -715,7 +765,8 @@
         </div>
 
       </div>
-      <div style="text-align: right; margin-top: 30px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+        <button onclick="downloadCSV()" class="btn-submit" style="width: auto; padding: 16px 30px; background: #222; color: var(--yellow); border: 1px solid var(--yellow);"><i data-lucide="download" style="width:16px;height:16px;margin-right:8px;vertical-align:middle;"></i> Download Member Backup (CSV)</button>
         <button id="btn-save-settings" class="btn-submit" style="width: auto; padding: 16px 40px;">Save Changes</button>
       </div>
     </div>
@@ -838,9 +889,21 @@
   <!-- Lucide Icons Script -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
-    // Enforce Login
-    if (sessionStorage.getItem('hf_admin_logged_in') !== 'true') {
-      window.location.href = 'login.html';
+    // Admin Security PIN Logic
+    function unlockDashboard() {
+      const pinInput = document.getElementById('admin-pin');
+      if (pinInput.value === '1234') {
+        sessionStorage.setItem('hf_pin_unlocked', 'true');
+        document.getElementById('pin-overlay').style.opacity = '0';
+        setTimeout(() => document.getElementById('pin-overlay').style.display = 'none', 400);
+      } else {
+        pinInput.classList.add('error');
+        setTimeout(() => pinInput.classList.remove('error'), 400);
+      }
+    }
+
+    if (sessionStorage.getItem('hf_pin_unlocked') === 'true') {
+      document.getElementById('pin-overlay').style.display = 'none';
     }
 
     // Initialize icons
@@ -853,13 +916,8 @@
     navLinks.forEach(link => {
       link.addEventListener('click', function(e) {
         e.preventDefault();
-        
-        // Remove active class from all
         navLinks.forEach(l => l.classList.remove('active'));
-        // Add active to clicked
         this.classList.add('active');
-        
-        // Switch sections
         const targetId = this.getAttribute('data-target');
         viewSections.forEach(sec => {
           sec.style.display = (sec.id === targetId) ? 'block' : 'none';
@@ -873,18 +931,74 @@
     const workoutTypeSelect = document.getElementById('modalWorkoutType');
     const renewalPlanSelect = document.getElementById('modalRenewalPlan');
     const calculatedCostEl = document.getElementById('calculated-cost');
-    let currentRow = null;
+    let currentMemberId = null;
 
     const addModal = document.getElementById('addMemberModal');
     const addWorkoutTypeSelect = document.getElementById('addWorkoutType');
     const addRenewalPlanSelect = document.getElementById('addRenewalPlan');
     const addCalculatedCostEl = document.getElementById('add-calculated-cost');
 
-    let totalRevenue = 0;
-    let monthRevenue = 0;
     const metricTotalRev = document.getElementById('metric-total-rev');
     const metricMonthRev = document.getElementById('metric-month-rev');
+    const metricDashboardRev = document.getElementById('metric-dashboard-rev');
     const revenueTableBody = document.getElementById('revenue-table-body');
+    const directoryTableBody = document.getElementById('directory-table-body');
+
+    // ── STATE MANAGEMENT ──
+    let state = {
+      gymMembers: [],
+      transactions: [],
+      totalRevenue: 0,
+      monthRevenue: 0,
+      nextId: 1
+    };
+
+    function checkExpirations() {
+      let changed = false;
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      state.gymMembers.forEach(member => {
+        const expiryDate = new Date(member.expiryDate);
+        const diffDays = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+        
+        let newStatus = 'Active';
+        if (diffDays < 0) {
+          newStatus = 'Expired';
+        } else if (diffDays <= 3) {
+          newStatus = 'Expiring Soon';
+        }
+
+        if (member.status !== newStatus) {
+          member.status = newStatus;
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        saveData();
+      }
+    }
+
+    function loadData() {
+      const saved = localStorage.getItem('hf_gym_data_v1');
+      if (saved) {
+        try {
+          state = JSON.parse(saved);
+        } catch (e) {
+          console.error("Failed to parse localStorage", e);
+        }
+      }
+      checkExpirations();
+      renderDirectory();
+      renderTransactions();
+      updateDashboardStats();
+      renderChart();
+    }
+
+    function saveData() {
+      localStorage.setItem('hf_gym_data_v1', JSON.stringify(state));
+    }
 
     // Shared Pricing Logic
     function calculatePrice(workout, duration) {
@@ -907,7 +1021,6 @@
       if (!workoutTypeSelect || !renewalPlanSelect || !calculatedCostEl) return;
       const price = calculatePrice(workoutTypeSelect.value, renewalPlanSelect.value);
       calculatedCostEl.innerText = `Total Cost: ₹${price}`;
-      // Store current price on element for easy retrieval
       calculatedCostEl.dataset.price = price;
     }
 
@@ -923,123 +1036,181 @@
     if (addWorkoutTypeSelect) addWorkoutTypeSelect.addEventListener('change', updateAddPricing);
     if (addRenewalPlanSelect) addRenewalPlanSelect.addEventListener('change', updateAddPricing);
 
-    // Renew Modal Handlers
-    function openModal(btn) {
-      currentRow = btn.closest('tr');
-      const memberName = currentRow.querySelector('.member-name').innerText;
-      memberNameInput.value = memberName;
-      updateRenewPricing();
-      modal.classList.add('active');
+    // Render Data
+    function renderDirectory() {
+      if (!directoryTableBody) return;
+      directoryTableBody.innerHTML = '';
+      
+      if (state.gymMembers.length === 0) {
+        directoryTableBody.innerHTML = `
+          <tr id="empty-state">
+            <td colspan="5" style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+              <div style="margin-bottom: 15px;"><i data-lucide="users" style="width: 48px; height: 48px; opacity: 0.3;"></i></div>
+              <h3 style="font-family: var(--font-heading); color: #fff; font-size: 1.5rem; margin-bottom: 5px;">No members found.</h3>
+              <p>Click "Add New Member" to start.</p>
+            </td>
+          </tr>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      state.gymMembers.forEach(member => {
+        let badgeClass = 'active';
+        let badgeText = member.status || 'Active';
+        
+        if (badgeText === 'Expired') badgeClass = 'expired';
+        else if (badgeText === 'Expiring Soon') badgeClass = 'expiring';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>
+            <div class="member-name">${member.name}</div>
+            <div class="member-phone">${member.phone}</div>
+          </td>
+          <td>${member.planText}</td>
+          <td>${member.expiryDate}</td>
+          <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+          <td>
+            <div class="actions">
+              <button class="btn-renew" onclick="openModal(${member.id})">Renew</button>
+              <button class="btn-icon" aria-label="WhatsApp Reminder" style="color: var(--green);" onclick="sendWhatsApp(${member.id})"><i data-lucide="message-circle"></i></button>
+              <button class="btn-icon" aria-label="Edit Member"><i data-lucide="edit-3"></i></button>
+              <button class="btn-icon" aria-label="Delete Member" style="color: var(--red);" onclick="deleteMember(${member.id})"><i data-lucide="trash-2"></i></button>
+            </div>
+          </td>
+        `;
+        directoryTableBody.appendChild(row);
+      });
+      lucide.createIcons();
     }
 
-    function closeModal() {
-      modal.classList.remove('active');
-      currentRow = null;
+    function renderTransactions() {
+      if (!revenueTableBody) return;
+      revenueTableBody.innerHTML = '';
+      
+      const sortedTx = [...state.transactions].reverse();
+      
+      sortedTx.forEach(tx => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${tx.date}</td>
+          <td><div class="member-name">${tx.name}</div></td>
+          <td>${tx.planText}</td>
+          <td style="color: var(--green); font-weight: bold;">₹${tx.amount.toLocaleString('en-IN')}</td>
+        `;
+        revenueTableBody.appendChild(row);
+      });
     }
+
+    // Update Dashboard Metrics
+    function updateDashboardStats() {
+      const activeMembersMetric = document.getElementById('metric-active-members');
+      if (activeMembersMetric) {
+        activeMembersMetric.innerText = state.gymMembers.length;
+      }
+      
+      if (metricTotalRev) metricTotalRev.innerText = `₹${state.totalRevenue.toLocaleString('en-IN')}`;
+      if (metricMonthRev) metricMonthRev.innerText = `₹${state.monthRevenue.toLocaleString('en-IN')}`;
+      if (metricDashboardRev) metricDashboardRev.innerText = `₹${state.monthRevenue.toLocaleString('en-IN')}`;
+    }
+
+    // Revenue Tracker
+    function logTransaction(name, planText, amount) {
+      const date = new Date();
+      const options = { month: 'short', day: '2-digit', year: 'numeric' };
+      const dateStr = date.toLocaleDateString('en-US', options);
+
+      state.transactions.push({
+        date: dateStr,
+        name: name,
+        planText: planText,
+        amount: amount
+      });
+
+      state.totalRevenue += amount;
+      state.monthRevenue += amount;
+      
+      saveData();
+      renderTransactions();
+      renderChart();
+    }
+
+    // Delete Member
+    window.deleteMember = function(id) {
+      if(confirm('Are you sure you want to delete this member?')) {
+        state.gymMembers = state.gymMembers.filter(m => m.id !== id);
+        saveData();
+        renderDirectory();
+        updateDashboardStats();
+      }
+    };
+
+    // Renew Modal Handlers
+    window.openModal = function(id) {
+      currentMemberId = id;
+      const member = state.gymMembers.find(m => m.id === id);
+      if (member) {
+        memberNameInput.value = member.name;
+        updateRenewPricing();
+        modal.classList.add('active');
+      }
+    };
+
+    window.closeModal = function() {
+      modal.classList.remove('active');
+      currentMemberId = null;
+    };
 
     modal.addEventListener('click', function(e) {
       if(e.target === modal) closeModal();
     });
 
-    // Add Member Modal Handlers
-    function openAddModal() {
-      updateAddPricing();
-      addModal.classList.add('active');
-    }
-
-    function closeAddModal() {
-      addModal.classList.remove('active');
-    }
-
-    addModal.addEventListener('click', function(e) {
-      if(e.target === addModal) closeAddModal();
-    });
-
-    // Update Dashboard Metrics
-    function updateDashboardStats() {
-      const tbody = document.getElementById('directory-table-body');
-      const activeMembersMetric = document.getElementById('metric-active-members');
-      if (!tbody || !activeMembersMetric) return;
-      
-      let count = 0;
-      const rows = tbody.querySelectorAll('tr');
-      rows.forEach(row => {
-        if (row.id !== 'empty-state') count++;
-      });
-      activeMembersMetric.innerText = count;
-    }
-
-    // Delete Member
-    function deleteMember(btn) {
-      if(confirm('Are you sure you want to delete this member?')) {
-        btn.closest('tr').remove();
-        updateDashboardStats();
-      }
-    }
-
-    // Revenue Tracker
-    function logTransaction(name, planText, amount) {
-      // Update metrics
-      totalRevenue += amount;
-      monthRevenue += amount;
-      metricTotalRev.innerText = `₹${totalRevenue.toLocaleString('en-IN')}`;
-      metricMonthRev.innerText = `₹${monthRevenue.toLocaleString('en-IN')}`;
-      
-      const dashboardRev = document.getElementById('metric-dashboard-rev');
-      if (dashboardRev) dashboardRev.innerText = `₹${monthRevenue.toLocaleString('en-IN')}`;
-
-      // Prepend to revenue table
-      const date = new Date();
-      const options = { month: 'short', day: '2-digit', year: 'numeric' };
-      const dateStr = date.toLocaleDateString('en-US', options);
-
-      const rowHtml = `
-        <tr>
-          <td>${dateStr}</td>
-          <td><div class="member-name">${name}</div></td>
-          <td>${planText}</td>
-          <td style="color: var(--green); font-weight: bold;">₹${amount.toLocaleString('en-IN')}</td>
-        </tr>
-      `;
-      revenueTableBody.insertAdjacentHTML('afterbegin', rowHtml);
-    }
-
-    // Submissions
-    function confirmRenewal(e) {
+    window.confirmRenewal = function(e) {
       e.preventDefault();
+      const member = state.gymMembers.find(m => m.id === currentMemberId);
       
-      if(currentRow) {
-        const cells = currentRow.querySelectorAll('td');
+      if(member) {
         const monthsToAdd = parseInt(renewalPlanSelect.value, 10);
-        
         const durationMatch = renewalPlanSelect.options[renewalPlanSelect.selectedIndex].text.match(/\((.*?)\)/);
         const durationText = durationMatch ? durationMatch[1] : renewalPlanSelect.options[renewalPlanSelect.selectedIndex].text;
         const workoutText = workoutTypeSelect.options[workoutTypeSelect.selectedIndex].text;
-        
         const combinedPlanText = `${workoutText} - ${durationText}`;
-        cells[1].innerText = combinedPlanText;
-
-        const date = new Date();
-        date.setMonth(date.getMonth() + monthsToAdd);
+        
+        const baseDate = new Date();
+        baseDate.setMonth(baseDate.getMonth() + monthsToAdd);
         const options = { month: 'short', day: '2-digit', year: 'numeric' };
-        const newExpiryDate = date.toLocaleDateString('en-US', options);
-
-        cells[2].innerText = newExpiryDate;
-
-        const badge = cells[3].querySelector('.badge');
-        badge.className = 'badge active';
-        badge.innerText = 'Active';
+        
+        member.planText = combinedPlanText;
+        member.expiryDate = baseDate.toLocaleDateString('en-US', options);
 
         const price = parseInt(calculatedCostEl.dataset.price || 0, 10);
-        logTransaction(memberNameInput.value, combinedPlanText, price);
+        logTransaction(member.name, combinedPlanText, price);
+        
+        saveData();
+        renderDirectory();
       }
 
       closeModal();
       e.target.reset();
       updateDashboardStats();
-    }
+    };
 
-    function confirmAddMember(e) {
+    // Add Member Modal Handlers
+    window.openAddModal = function() {
+      updateAddPricing();
+      addModal.classList.add('active');
+    };
+
+    window.closeAddModal = function() {
+      addModal.classList.remove('active');
+    };
+
+    addModal.addEventListener('click', function(e) {
+      if(e.target === addModal) closeAddModal();
+    });
+
+    window.confirmAddMember = function(e) {
       e.preventDefault();
       
       const name = document.getElementById('addMemberName').value;
@@ -1059,42 +1230,25 @@
 
       const price = parseInt(addCalculatedCostEl.dataset.price || 0, 10);
 
-      // Inject into Directory Table
-      const directoryTableBody = document.getElementById('directory-table-body');
+      const newMember = {
+        id: state.nextId++,
+        name: name,
+        phone: phone,
+        planText: combinedPlanText,
+        expiryDate: newExpiryDate
+      };
       
-      const emptyState = document.getElementById('empty-state');
-      if (emptyState) emptyState.remove();
+      state.gymMembers.unshift(newMember);
 
-      const newRowHtml = `
-        <tr>
-          <td>
-            <div class="member-name">${name}</div>
-            <div class="member-phone">${phone}</div>
-          </td>
-          <td>${combinedPlanText}</td>
-          <td>${newExpiryDate}</td>
-          <td><span class="badge active">Active</span></td>
-          <td>
-            <div class="actions">
-              <button class="btn-renew" onclick="openModal(this)">Renew</button>
-              <button class="btn-icon" aria-label="Edit Member"><i data-lucide="edit-3"></i></button>
-              <button class="btn-icon" aria-label="Delete Member" style="color: var(--red);" onclick="deleteMember(this)"><i data-lucide="trash-2"></i></button>
-            </div>
-          </td>
-        </tr>
-      `;
-      directoryTableBody.insertAdjacentHTML('afterbegin', newRowHtml);
-      
-      // Log transaction
       logTransaction(name, combinedPlanText, price);
-
-      // Refresh icons
-      lucide.createIcons();
+      
+      saveData();
+      renderDirectory();
 
       closeAddModal();
       e.target.reset();
       updateDashboardStats();
-    }
+    };
 
     // Real-Time Search Filtering
     const searchInput = document.getElementById('member-search');
@@ -1106,6 +1260,8 @@
         const rows = tbody.getElementsByTagName('tr');
         
         for (let i = 0; i < rows.length; i++) {
+          if (rows[i].id === 'empty-state') continue;
+          
           const textContent = rows[i].textContent || rows[i].innerText;
           if (textContent.toLowerCase().indexOf(filter) > -1) {
             rows[i].style.display = "";
@@ -1132,6 +1288,123 @@
         }, 1000);
       });
     }
+
+    // 1-Click Excel Backup (CSV)
+    window.downloadCSV = function() {
+      if(state.gymMembers.length === 0) {
+        alert("No members to backup!");
+        return;
+      }
+      
+      const headers = ["Name", "Phone", "Plan", "Expiry Date", "Status"];
+      const rows = state.gymMembers.map(m => {
+        const expiryDate = new Date(m.expiryDate);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const diffDays = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+        const status = diffDays < 0 ? "Expired" : "Active";
+        
+        return [
+          `"${m.name.replace(/"/g, '""')}"`,
+          `"${m.phone}"`,
+          `"${m.planText}"`,
+          `"${m.expiryDate}"`,
+          `"${status}"`
+        ].join(",");
+      });
+      
+      const csvContent = [headers.join(","), ...rows].join("\n");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "HanumanFitness_Backup.csv");
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    // WhatsApp Reminders
+    window.sendWhatsApp = function(id) {
+      const member = state.gymMembers.find(m => m.id === id);
+      if(!member) return;
+      
+      const text = `Hi ${member.name}, this is HanumanFitness. Just a quick reminder that your ${member.planText} membership is expiring on ${member.expiryDate}. Let us know when you would like to renew!`;
+      const encodedText = encodeURIComponent(text);
+      
+      let phone = member.phone.replace(/[^0-9]/g, '');
+      if(phone.length === 10) phone = '91' + phone;
+      
+      window.open(`https://wa.me/${phone}?text=${encodedText}`, '_blank');
+    };
+
+    // Interactive Revenue Chart
+    let revChartInstance = null;
+    window.renderChart = function() {
+      const ctx = document.getElementById('revenueChart');
+      if(!ctx) return;
+
+      const today = new Date();
+      const thisMonth = today.getMonth();
+      const thisYear = today.getFullYear();
+
+      const grouped = {
+        'Strength Training': 0,
+        'Cardio + Strength': 0
+      };
+
+      state.transactions.forEach(tx => {
+        const txDate = new Date(tx.date);
+        if (txDate.getMonth() === thisMonth && txDate.getFullYear() === thisYear) {
+          if (tx.planText.includes('Cardio + Strength')) {
+            grouped['Cardio + Strength'] += tx.amount;
+          } else if (tx.planText.includes('Strength Training')) {
+            grouped['Strength Training'] += tx.amount;
+          }
+        }
+      });
+
+      if(revChartInstance) {
+        revChartInstance.destroy();
+      }
+
+      revChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Strength Training', 'Cardio + Strength'],
+          datasets: [{
+            label: 'Revenue (₹)',
+            data: [grouped['Strength Training'], grouped['Cardio + Strength']],
+            backgroundColor: ['#FFD700', '#333333'],
+            borderWidth: 0,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(255,255,255,0.1)' },
+              ticks: { color: '#aaaaaa' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#aaaaaa' }
+            }
+          }
+        }
+      });
+    };
+
+    // Initialize application
+    loadData();
   </script>
 </body>
 </html>
