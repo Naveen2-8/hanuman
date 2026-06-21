@@ -450,33 +450,36 @@
         border-right: none;
         border-top: 1px solid var(--border);
         flex-direction: row;
-        z-index: 1000;
-        background: var(--surface);
+        z-index: 100;
+        background: #1a1a1a;
       }
       .brand, .sidebar-footer { display: none; }
       .nav-menu {
         flex-direction: row;
-        padding: 0; gap: 0;
+        padding: 10px 0; gap: 0;
         justify-content: space-around;
         align-items: center;
         width: 100%;
       }
       .nav-link {
-        flex-direction: column;
-        gap: 4px; padding: 8px;
-        font-size: 0.65rem;
-        text-align: center;
-        border-radius: 0;
+        font-size: 0; /* Hide text */
+        padding: 10px;
+        justify-content: center;
+        border-radius: 8px;
+      }
+      .nav-link svg {
+        margin-right: 0;
+        width: 24px;
+        height: 24px;
       }
       .nav-link.active {
         background: transparent;
         color: var(--yellow);
       }
       
-      /* Main Content adjustments */
+      /* Main Content adjustments (Header Spacing) */
       .main-content {
-        padding: 20px;
-        padding-bottom: 90px;
+        padding: 40px 15px 90px 15px;
       }
       .page-header {
         flex-direction: column;
@@ -499,14 +502,25 @@
       .search-box { width: 100%; }
       .table-header .btn-submit { width: 100% !important; margin-top: 0; }
       
-      .table-container { overflow-x: auto; }
+      .table-container { overflow-x: auto; width: 100%; border-radius: 8px; }
       table { min-width: 650px; }
+      table th, table td { white-space: nowrap; }
       
-      /* Modal adjustments */
+      /* Modal & Settings Card adjustments */
       .modal-card {
         padding: 20px;
-        max-width: 92%;
+        width: 95%;
+        max-width: 100%;
       }
+      .settings-card {
+        width: 100%;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .form-group label { margin-bottom: 5px; }
     }
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
