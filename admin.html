@@ -13,6 +13,9 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <!-- SheetJS (Excel Export) -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
   <!-- Lucide Icons script loaded at the bottom -->
   
   <style>
@@ -738,7 +741,7 @@
 
     <!-- Settings View -->
     <div id="settings-view" class="view-section" style="display: none;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+      <div style="max-width: 800px; margin: 0 auto;">
         
         <!-- Gym Details Card -->
         <div class="table-container" style="padding: 30px;">
@@ -757,31 +760,10 @@
           </div>
         </div>
 
-        <!-- Pricing Configuration Card -->
-        <div class="table-container" style="padding: 30px;">
-          <h2 style="font-family: var(--font-heading); color: var(--yellow); margin-bottom: 20px;">Pricing Configuration</h2>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div>
-              <h4 style="color: #aaa; margin-bottom: 10px;">Strength Training</h4>
-              <div class="form-group"><label>1 Month</label><input type="number" value="1000"></div>
-              <div class="form-group"><label>3 Months</label><input type="number" value="2500"></div>
-              <div class="form-group"><label>6 Months</label><input type="number" value="4000"></div>
-              <div class="form-group"><label>12 Months</label><input type="number" value="7000"></div>
-            </div>
-            <div>
-              <h4 style="color: #aaa; margin-bottom: 10px;">Cardio + Strength</h4>
-              <div class="form-group"><label>1 Month</label><input type="number" value="1500"></div>
-              <div class="form-group"><label>3 Months</label><input type="number" value="4000"></div>
-              <div class="form-group"><label>6 Months</label><input type="number" value="7000"></div>
-              <div class="form-group"><label>12 Months</label><input type="number" value="10000"></div>
-            </div>
-          </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+          <button onclick="downloadCSV()" class="btn-submit" style="width: auto; padding: 16px 30px; background: #222; color: var(--yellow); border: 1px solid var(--yellow);"><i data-lucide="table" style="width:16px;height:16px;margin-right:8px;vertical-align:middle;"></i> Download Excel Backup (.xlsx)</button>
+          <button id="btn-save-settings" class="btn-submit" style="width: auto; padding: 16px 40px;">Save Changes</button>
         </div>
-
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
-        <button onclick="downloadCSV()" class="btn-submit" style="width: auto; padding: 16px 30px; background: #222; color: var(--yellow); border: 1px solid var(--yellow);"><i data-lucide="download" style="width:16px;height:16px;margin-right:8px;vertical-align:middle;"></i> Download Member Backup (CSV)</button>
-        <button id="btn-save-settings" class="btn-submit" style="width: auto; padding: 16px 40px;">Save Changes</button>
       </div>
     </div>
 
@@ -1303,41 +1285,44 @@
       });
     }
 
-    // 1-Click Excel Backup (CSV)
+    // 1-Click Excel Backup (.xlsx via SheetJS)
     window.downloadCSV = function() {
-      if(state.gymMembers.length === 0) {
+      if (state.gymMembers.length === 0) {
         alert("No members to backup!");
         return;
       }
-      
-      const headers = ["Name", "Phone", "Plan", "Expiry Date", "Status"];
-      const rows = state.gymMembers.map(m => {
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const data = state.gymMembers.map(m => {
         const expiryDate = new Date(m.expiryDate);
-        const today = new Date();
-        today.setHours(0,0,0,0);
         const diffDays = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
-        const status = diffDays < 0 ? "Expired" : "Active";
-        
-        return [
-          `"${m.name.replace(/"/g, '""')}"`,
-          `"${m.phone}"`,
-          `"${m.planText}"`,
-          `"${m.expiryDate}"`,
-          `"${status}"`
-        ].join(",");
+        const status = m.status || (diffDays < 0 ? 'Expired' : diffDays <= 3 ? 'Expiring Soon' : 'Active');
+
+        return {
+          'Name': m.name,
+          'Phone Number': m.phone,
+          'Workout Plan': m.planText,
+          'Expiry Date': m.expiryDate,
+          'Status': status
+        };
       });
-      
-      const csvContent = [headers.join(","), ...rows].join("\n");
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", "HanumanFitness_Backup.csv");
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+
+      const ws = XLSX.utils.json_to_sheet(data);
+
+      // Column widths for readability
+      ws['!cols'] = [
+        { wch: 25 }, // Name
+        { wch: 15 }, // Phone Number
+        { wch: 30 }, // Workout Plan
+        { wch: 15 }, // Expiry Date
+        { wch: 15 }  // Status
+      ];
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Members');
+      XLSX.writeFile(wb, 'HanumanFitness_Database.xlsx');
     };
 
     // WhatsApp Reminders
